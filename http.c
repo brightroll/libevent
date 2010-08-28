@@ -1198,6 +1198,10 @@ evhttp_connectioncb(int fd, short what, void *arg)
 	}
 	evhttp_connection_reset(evcon);
 
+	evhttp_connection_fail(evcon, EVCON_HTTP_ERROR);
+}
+
+#if 0
 	/* for now, we just signal all requests by executing their callbacks */
 	while (TAILQ_FIRST(&evcon->requests) != NULL) {
 		struct evhttp_request *request = TAILQ_FIRST(&evcon->requests);
@@ -1209,6 +1213,7 @@ evhttp_connectioncb(int fd, short what, void *arg)
 		evhttp_request_free(request);
 	}
 }
+#endif
 
 /*
  * Check if we got a valid response code.

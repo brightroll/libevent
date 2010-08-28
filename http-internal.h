@@ -25,6 +25,7 @@ enum message_read_status {
 };
 
 enum evhttp_connection_error {
+	EVCON_HTTP_ERROR,
 	EVCON_HTTP_TIMEOUT,
 	EVCON_HTTP_EOF,
 	EVCON_HTTP_INVALID_HEADER
