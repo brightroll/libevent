@@ -2306,7 +2306,7 @@ evhttp_bind_socket(struct evhttp *http, const char *address, u_short port)
 	if ((fd = bind_socket(address, port, 1 /*reuse*/)) == -1)
 		return (-1);
 
-	if (listen(fd, 128) == -1) {
+	if (listen(fd, 1024) == -1) {
 		event_warn("%s: listen", __func__);
 		EVUTIL_CLOSESOCKET(fd);
 		return (-1);
