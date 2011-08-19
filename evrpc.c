@@ -168,6 +168,7 @@ static int
 evrpc_process_hooks(struct evrpc_hook_list *head,
     struct evhttp_request *req, struct evbuffer *evbuf)
 {
+	req->state = 'N';
 	struct evrpc_hook *hook;
 	TAILQ_FOREACH(hook, head, next) {
 		if (hook->process(req, evbuf, hook->process_arg) == -1)
@@ -260,6 +261,7 @@ evrpc_request_cb(struct evhttp_request *req, void *arg)
 {
 	struct evrpc *rpc = arg;
 	struct evrpc_req_generic *rpc_state = NULL;
+	req->state = 'O';
 
 	/* let's verify the outside parameters */
 	if (req->type != EVHTTP_REQ_POST ||
@@ -331,6 +333,7 @@ void
 evrpc_request_done(struct evrpc_req_generic* rpc_state)
 {
 	struct evhttp_request *req = rpc_state->http_req;
+	req->state = 'P';
 	struct evrpc *rpc = rpc_state->rpc;
 	struct evbuffer* data = NULL;
 
@@ -517,6 +520,7 @@ evrpc_schedule_request(struct evhttp_connection *connection,
 	if ((req = evhttp_request_new(evrpc_reply_done, ctx)) == NULL)
 		goto error;
 
+	req->state = 'Q';
 	/* serialize the request data into the output buffer */
 	ctx->request_marshal(req->output_buffer, ctx->request);
 
@@ -590,7 +594,8 @@ evrpc_reply_done(struct evhttp_request *req, void *arg)
 	struct evrpc_pool *pool = ctx->pool;
 	struct evrpc_status status;
 	int res = -1;
-	
+
+	req->state = 'R';
 	/* cancel any timeout we might have scheduled */
 	event_del(&ctx->ev_timeout);
 
