@@ -603,9 +603,21 @@ evhttp_connection_incoming_fail(struct evhttp_request *req,
     enum evhttp_connection_error error)
 {
 	req->state = 'e';
+	if(req->uri)
+		strncpy((char*) &req->d_url, req->uri, 50);
 	switch (error) {
 	case EVCON_HTTP_TIMEOUT:
+		if(req->userdone)
+			req->state = 'S';
+		else
+			req->state = 'X';
 	case EVCON_HTTP_EOF:
+		if(req->state == 'e') {
+			if(req->userdone)
+				req->state = 'T';
+			else
+				req->state = 'W';
+		}
 		/* 
 		 * these are cases in which we probably should just
 		 * close the connection and not send a reply.  this
@@ -624,8 +636,11 @@ evhttp_connection_incoming_fail(struct evhttp_request *req,
 		}
 		return (-1);
 	case EVCON_HTTP_INVALID_HEADER:
+		req->state = 'U';
 	default:	/* xxx: probably should just error on default */
 		/* the callback looks at the uri to determine errors */
+		if(req->state == 'e')
+			req->state = 'V';
 		if (req->uri) {
 			free(req->uri);
 			req->uri = NULL;

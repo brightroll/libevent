@@ -218,6 +218,7 @@ struct {
 
 	char state;			/* BR: state for core analysis */
 	int spid;			/* BR: spid from request */
+	char d_url[50];			/* BR: url for debugging */
 
 	int response_code;		/* HTTP Response code */
 	char *response_code_line;	/* Readable response */
