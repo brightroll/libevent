@@ -217,6 +217,7 @@ struct {
 	char minor;			/* HTTP Minor number */
 
 	char state;			/* BR: state for core analysis */
+	int spid;			/* BR: spid from request */
 
 	int response_code;		/* HTTP Response code */
 	char *response_code_line;	/* Readable response */
