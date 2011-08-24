@@ -626,6 +626,7 @@ evhttp_connection_incoming_fail(struct evhttp_request *req,
 		 * the request is still being used for sending, we
 		 * need to disassociated it from the connection here.
 		 */
+#if 0 /* hoping this will fix a memory leak */
 		if (!req->userdone) {
 			/* remove it so that it will not be freed */
 			TAILQ_REMOVE(&req->evcon->requests, req, next);
@@ -634,6 +635,7 @@ evhttp_connection_incoming_fail(struct evhttp_request *req,
 			 */
 			req->evcon = NULL;
 		}
+#endif
 		return (-1);
 	case EVCON_HTTP_INVALID_HEADER:
 		req->state = 'U';
