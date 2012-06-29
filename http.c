@@ -3092,7 +3092,7 @@ evhttp_bind_socket_with_handle(struct evhttp *http, const char *address, ev_uint
 	if ((fd = bind_socket(address, port, 1 /*reuse*/)) == -1)
 		return (NULL);
 
-	if (listen(fd, 128) == -1) {
+	if (listen(fd, 1024) == -1) {
 		event_sock_warn(fd, "%s: listen", __func__);
 		evutil_closesocket(fd);
 		return (NULL);
