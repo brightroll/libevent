@@ -227,7 +227,7 @@ struct {
 	struct evbuffer *output_buffer;	/* outgoing post or data */
 
 	/* Callback */
-	void (*cb)(struct evhttp_request *, void *);
+	int (*cb)(struct evhttp_request *, void *);
 	void *cb_arg;
 
 	/*
@@ -244,7 +244,7 @@ struct {
  * error occurred.
  */
 struct evhttp_request *evhttp_request_new(
-	void (*cb)(struct evhttp_request *, void *), void *arg);
+	int (*cb)(struct evhttp_request *, void *), void *arg);
 
 /** enable delivery of chunks to requestor */
 void evhttp_request_set_chunked_cb(struct evhttp_request *,

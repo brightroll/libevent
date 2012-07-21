@@ -774,10 +774,12 @@ evhttp_connection_done(struct evhttp_connection *evcon)
 	}
 
 	/* notify the user of the request */
-	(*req->cb)(req, req->cb_arg);
+	int free_request = (*req->cb)(req, req->cb_arg);
 
-	/* if this was an outgoing request, we own and it's done. so free it */
-	if (con_outgoing) {
+	/* if this was an outgoing request, we own and it's done. so free it
+	 * BR HACK: we want to keep backend request data until we've sent the
+	 * frontend request. */
+	if (con_outgoing && free_request) {
 		evhttp_request_free(req);
 	}
 }
@@ -2228,7 +2230,7 @@ evhttp_dispatch_callback(struct httpcbq *callbacks, struct evhttp_request *req)
 	return (NULL);
 }
 
-static void
+static int
 evhttp_handle_request(struct evhttp_request *req, void *arg)
 {
 	struct evhttp *http = arg;
@@ -2485,7 +2487,7 @@ evhttp_set_gencb(struct evhttp *http,
  */
 
 struct evhttp_request *
-evhttp_request_new(void (*cb)(struct evhttp_request *, void *), void *arg)
+evhttp_request_new(int (*cb)(struct evhttp_request *, void *), void *arg)
 {
 	struct evhttp_request *req = NULL;
 
